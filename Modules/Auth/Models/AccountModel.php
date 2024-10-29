@@ -7,12 +7,17 @@ use CodeIgniter\Model;
 
 class AccountModel extends Model
 {
-    public final const int FLAG_ADMIN = 0;
-    public final const int FLAG_TEACHER = 1;
-    public final const int FLAG_STUDENT = 2;
-    public final const int STATUS_INACTIVE = 0;
-    public final const int STATUS_ACTIVE   = 1;
-    public final const int STATUS_DRAFT    = 2;
+    final public const int FLAG_ADMIN      = 0;
+    final public const int FLAG_TEACHER    = 1;
+    final public const int FLAG_STUDENT    = 2;
+    final public const int STATUS_INACTIVE = 0;
+    final public const int STATUS_ACTIVE   = 1;
+    final public const int STATUS_DRAFT    = 2;
+    final public const array FLAGS         = [
+        '0' => 'Administrator',
+        '1' => 'Teacher',
+        '2' => 'Student',
+    ];
 
     protected $table         = 'accounts';
     protected $primaryKey    = 'id';

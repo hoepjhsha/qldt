@@ -19,9 +19,10 @@ class AuthForm extends AccountModel
                     $session = session();
                     $session->set([
                         'user' => [
-                            'id'   => $user->id,
-                            'name' => $user->username,
-                            'flag' => $user->flag,
+                            'id'        => $user->id,
+                            'name'      => $user->username,
+                            'flag'      => $user->flag,
+                            'flag_name' => self::FLAGS[$user->flag],
                         ],
                     ]);
 

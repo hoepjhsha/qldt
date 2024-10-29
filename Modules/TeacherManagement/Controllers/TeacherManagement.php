@@ -1,14 +1,15 @@
 <?php
 
-namespace Home\Controllers;
+namespace TeacherManagement\Controllers;
 
+use App\Controllers\BaseController;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class Home extends \App\Controllers\BaseController
+class TeacherManagement extends BaseController
 {
-    protected string $module_name = 'Home';
+    protected string $module_name = 'TeacherManagement';
 
     /**
      * @throws LoaderError

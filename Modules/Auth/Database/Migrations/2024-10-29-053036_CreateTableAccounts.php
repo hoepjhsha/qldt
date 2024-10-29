@@ -48,6 +48,7 @@ class CreateTableAccounts extends Migration
             ],
         ]);
         $this->forge->addPrimaryKey('id');
+        $this->forge->addUniqueKey('username');
         $this->forge->createTable('accounts', true);
     }
 
