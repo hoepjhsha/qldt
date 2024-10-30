@@ -3,7 +3,7 @@
 namespace Auth\Controllers;
 
 use App\Controllers\BaseController;
-use Auth\Libraries\Forms\AuthForm;
+use Auth\Libraries\AuthLib;
 use CodeIgniter\HTTP\ResponseInterface;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -24,7 +24,7 @@ class Auth extends BaseController
             return $this->response->redirect('/');
         }
         if ($this->request->getMethod() === 'POST') {
-            $form           = new AuthForm();
+            $form           = new AuthLib();
             $form->username = $this->request->getVar('username');
             $form->password = $this->request->getVar('password');
 

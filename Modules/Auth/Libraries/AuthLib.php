@@ -1,10 +1,10 @@
 <?php
 
-namespace Auth\Libraries\Forms;
+namespace Auth\Libraries;
 
 use Auth\Models\AccountModel;
 
-class AuthForm extends AccountModel
+class AuthLib extends AccountModel
 {
     public string $username;
     public string $password;
