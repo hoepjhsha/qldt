@@ -38,5 +38,34 @@ class AddDefaultData extends Seeder
             'created_at'    => date('Y-m-d H:i:s', time()),
             'updated_at'    => date('Y-m-d H:i:s', time()),
         ]);
+
+        /**
+         * Add some courses data to the database
+         */
+        $courses = [
+            ['course_name' => 'Mathematics'],
+            ['course_name' => 'Physics'],
+            ['course_name' => 'Chemistry'],
+            ['course_name' => 'Biology'],
+            ['course_name' => 'History'],
+            ['course_name' => 'Geography'],
+            ['course_name' => 'Computer Science'],
+            ['course_name' => 'English Literature'],
+            ['course_name' => 'Philosophy'],
+            ['course_name' => 'Psychology'],
+            ['course_name' => 'Art History'],
+            ['course_name' => 'Political Science'],
+            ['course_name' => 'Economics'],
+            ['course_name' => 'Music Theory'],
+            ['course_name' => 'Sociology'],
+        ];
+
+        foreach ($courses as $course) {
+            $this->db->table('courses')->insert([
+                'course_name' => $course['course_name'],
+                'created_at'  => date('Y-m-d H:i:s', time()),
+                'updated_at'  => date('Y-m-d H:i:s', time()),
+            ]);
+        }
     }
 }
