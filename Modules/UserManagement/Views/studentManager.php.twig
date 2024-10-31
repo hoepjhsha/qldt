@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>Tables Advanced | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Responsive bootstrap 4 admin template" name="description"/>
+    <meta content="Coderthemes" name="author"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <!-- third party css -->
+    <link href="assets/libs/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/libs/datatables/buttons.bootstrap4.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/libs/datatables/responsive.bootstrap4.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/libs/datatables/select.bootstrap4.css" rel="stylesheet" type="text/css"/>
+    <!-- App css -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet"/>
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet"/>
+
+</head>
+
+<body>
+<!-- Begin page -->
+<div id="wrapper">
+    <!-- ============================================================== -->
+    <!-- Start Page Content here -->
+    <!-- ============================================================== -->
+
+    <div class="content-page">
+        <div class="content">
+
+            <!-- Start container-fluid -->
+            <div class="container-fluid">
+
+                <!-- start  -->
+                <div class="row">
+                    <div class="col-12">
+                        <div>
+                            <h4 class="header-title mb-3">Student Manager</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-12">
+                        <div>
+
+                            <button type="button"
+                                    onclick="openModal()"
+                                    class="btn btn-teal mt-2"
+                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                Add Student
+                            </button>
+                            <p class="sub-header">
+
+                            </p>
+
+                            <table id="datatable" class="table table-bordered dt-responsive nowrap"
+                                   style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Created At</th>
+                                    <th>Updated At</th>
+                                    <th>Operation</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for student in students %}
+                                    <tr>
+                                        <td>{{ student.id }}</td>
+                                        <td>{{ student.username }}</td>
+                                        <td>{% if student.status == 1 %}
+                                                Active
+                                            {% else %}
+                                                Inactive
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ student.created_at }}</td>
+                                        <td>{{ student.updated_at }}</td>
+
+                                        <td class="dropdown notification-list">
+                                            <a class="nav-link dropdown-toggle nav-user mr-0" data-toggle="dropdown"
+                                               href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                                                <i class="mdi mdi-account-edit-outline"></i>
+                                                <i class="mdi mdi-chevron-down"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                                                <!-- item-->
+                                                <button href="" data-bs-toggle="modal"
+                                                        onclick="openModal{{ student.id }}()"
+                                                        data-bs-target="#edit-form-modal-"
+                                                        class="dropdown-item notify-item">
+                                                    <i data-feather="edit"></i> Chỉnh sửa
+                                                </button>
+
+                                                <!-- item-->
+                                                <form method="post" id="user-delete-form-{{ student.id }}">
+                                                    <input type="hidden" name="{{ csrf_token }}"
+                                                           value="{{ csrf_hash }}">
+                                                    <input type="hidden" value="{{ student.id }}" name="delete_id">
+                                                    <a class="dropdown-item notify-item"
+                                                       title="Xoá {{ student.id }}"
+                                                       onclick="confirmDelete({{ student.id }})"
+                                                       href="javascript:;">
+                                                        <i data-feather="trash-2"></i>
+                                                        Xóa
+                                                    </a>
+                                                    <noscript>
+                                                        <input type="submit" value="Submit form!"/>
+                                                    </noscript>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- Update Modal -->
+                                    <style>
+                                        /* Kiểu cho modal overlay */
+                                        .modal-overlay {
+                                            display: none; /* Ẩn modal ban đầu */
+                                            position: fixed;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100%;
+                                            height: 100%;
+                                            background: rgba(0, 0, 0, 0.5);
+                                            justify-content: center;
+                                            align-items: center;
+                                            z-index: 1000;
+                                        }
+
+                                        /* Kiểu cho modal nội dung */
+                                        .modal-content {
+                                            background-color: white;
+                                            padding: 20px;
+                                            border-radius: 8px;
+                                            max-width: 500px;
+                                            width: 100%;
+                                            text-align: center;
+                                        }
+                                    </style>
+
+                                    <div class="modal-overlay" id="myModal{{ student.id }}">
+                                        <div class="modal-content">
+                                            <!-- User Update Form begin -->
+                                            <form class="form-horizontal" method="post">
+                                                <h3>Update User</h3>
+                                                <input type="hidden" name="{{ csrf_token }}" value="{{ csrf_hash }}">
+                                                <input type="hidden" value="{{ student.id }}" name="change_id">
+                                                <div class="form-group row">
+                                                    <label class="col-md-2 col-form-label">Username</label>
+                                                    <div class="col-md-10">
+                                                        <input type="text" class="form-control" placeholder="Username" name="update_username" value="{{ student.username }}">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-md-2 col-form-label" for="example-password{{ student.id }}" >Password</label>
+                                                    <div class="col-md-10">
+                                                        <input type="password" name="update_password" class="form-control" id="example-password{{ student.id }}" value="{{ student.password }}"
+                                                               placeholder="Password">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-md-2 col-form-label" for="exoption{{ student.id }}">Status</label>
+                                                    <div class="col-md-10">
+                                                        <select id="exoption{{ student.id }}" class="form-control" name="update_status">
+                                                            <option value="1" {% if student.status == 1 %} selected {% endif %}>Active</option>
+                                                            <option value="0"{% if student.status == 0 %} selected {% endif %}>Deactive</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary ">Submit</button>
+                                                <a style="color: white" class="btn btn-warning " onclick="closeModal{{ student.id }}()">Đóng</a>
+                                            </form>
+
+                                            <!-- User Update Form ends -->
+
+                                        </div>
+                                    </div>
+                                    <script>
+                                        // Mở modal
+                                        function openModal{{ student.id }}() {
+                                                document.getElementById('myModal{{ student.id }}').style.display = 'flex';
+                                        }
+
+                                        // Đóng modal
+                                        function closeModal{{ student.id }}() {
+                                            document.getElementById('myModal{{ student.id }}').style.display = 'none';
+                                        }
+                                    </script>
+                                    <!--End Update Modal -->
+
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <!-- end -->
+
+                    </div>
+                </div>
+                <!-- end row -->
+
+            </div>
+            <!-- end container-fluid -->
+
+
+            <!-- Footer Start -->
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            2017 - 2020 &copy; Simple theme by <a href="#">Coderthemes</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- end Footer -->
+
+        </div>
+        <!-- end content -->
+
+    </div>
+    <!-- END content-page -->
+
+</div>
+<!-- END wrapper -->
+
+
+<!-- Create Modal -->
+<style>
+    /* Kiểu cho modal overlay */
+    .modal-overlay {
+        display: none; /* Ẩn modal ban đầu */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    /* Kiểu cho modal nội dung */
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Kiểu nút đóng */
+    .close-button {
+        float: right;
+        font-size: 1.5em;
+        cursor: pointer;
+    }
+</style>
+
+<div class="modal-overlay" id="myModal">
+
+    <div class="modal-content">
+        {#        <button class="btn btn-primary" onclick="closeModal()">Đóng</button> #}
+        <!-- User Create Form begin -->
+        <form class="form-horizontal" method="post">
+            <h3>Add User</h3>
+            <input type="hidden" name="{{ csrf_token }}" value="{{ csrf_hash }}">
+            <input type="hidden" value="1" name="create_id">
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label">Username</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" placeholder="Username" name="create_username">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="example-password">Password</label>
+                <div class="col-md-10">
+                    <input type="password" name="create_password" class="form-control" id="example-password"
+                           placeholder="Password">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <!-- User Create Form ends -->
+
+    </div>
+</div>
+<script>
+    // Mở modal
+    function openModal() {
+        document.getElementById('myModal').style.display = 'flex';
+    }
+
+    // Đóng modal
+    function closeModal() {
+        document.getElementById('myModal').style.display = 'none';
+    }
+
+    // Đóng modal khi người dùng bấm ra ngoài modal
+    window.onclick = function (event) {
+        var modal = document.getElementById('myModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+</script>
+<!--End Create Modal -->
+
+
+<!-- Function -->
+<script defer>
+    function confirmDelete(userId) {
+        //alert box
+        let confirmation = confirm("Bạn có chắc chắn muốn xóa người dùng này không?");
+
+        // if user confirm to delete -> post
+        if (confirmation) {
+            document.getElementById('user-delete-form-' + userId).submit();
+        }
+    }
+</script>
+
+<!-- Vendor js -->
+<script src="assets/js/vendor.min.js"></script>
+
+<!-- Required datatable js -->
+<script src="assets/libs/datatables/jquery.dataTables.min.js"></script>
+<script src="assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Buttons examples -->
+<script src="assets/libs/datatables/dataTables.buttons.min.js"></script>
+<script src="assets/libs/datatables/buttons.bootstrap4.min.js"></script>
+<script src="assets/libs/datatables/dataTables.keyTable.min.js"></script>
+<script src="assets/libs/datatables/dataTables.select.min.js"></script>
+<script src="assets/libs/jszip/jszip.min.js"></script>
+<script src="assets/libs/pdfmake/pdfmake.min.js"></script>
+<script src="assets/libs/pdfmake/vfs_fonts.js"></script>
+<script src="assets/libs/datatables/buttons.html5.min.js"></script>
+<script src="assets/libs/datatables/buttons.print.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="assets/libs/datatables/dataTables.responsive.min.js"></script>
+<script src="assets/libs/datatables/responsive.bootstrap4.min.js"></script>
+
+<!-- Datatables init -->
+<script src="assets/js/pages/datatables.init.js"></script>
+
+<!-- App js -->
+<script src="assets/js/app.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+  mysql:
+    container_name: qldt-mysql
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=@Mysql123456
+      - MYSQL_DATABASE=qldt_db
+      - MYSQL_USER=qldt
+      - MYSQL_PASSWORD=@Mysql123456
+    restart: always
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    container_name: qldt-phpmyadmin
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+    restart: always
+    ports:
+      - "8081:80"
+    links:
+      - mysql
+
+  web:
+    container_name: qldt_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./:/var/www/html/qldt
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+    extra_hosts:
+      - "qldt.local:127.0.0.1"
+    hostname: qldt.local
+    ports:
+      - "80:80"
+    links:
+      - mysql
